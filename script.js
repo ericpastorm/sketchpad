@@ -6,10 +6,10 @@ function drawButton(grid){
         case 0:  
             break;
         case 1:
-            grid.style.background = 'black'
+            grid.style.backgroundColor = '#2f3542';
             break
         case 2:
-            grid.style.background = 'white'
+            grid.style.background = 'white';
             break;
         default:
             break;
@@ -30,15 +30,21 @@ function selBtns(){
 function createGrid(sizeX = 16, sizeY = 16){
     selBtns();
     for (let i = 0; i < sizeX; i++) {
+        let divSize = +(600/sizeX);
         let gridOne = document.createElement("button");
         gridOne.classList.add("gridOne");
+        gridOne.style.height = divSize + 'px';
+        gridOne.style.width = divSize + 'px';
+        console.log(divSize);
         gridOne.addEventListener('mouseenter',function (e) {
             drawButton(gridOne);
         });
         gridDiv.appendChild(gridOne);
-        for (let z = 0; z < sizeY; z++) {
+        for (let z = 1; z < sizeY; z++) {
             let gridOne = document.createElement("button");
             gridOne.classList.add("gridOne");
+            gridOne.style.height = divSize + 'px';
+            gridOne.style.width = divSize + 'px';
             gridOne.addEventListener('mouseenter',function (e) {
                 drawButton(gridOne);
             });
