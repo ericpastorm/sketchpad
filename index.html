@@ -2,26 +2,144 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sketchpad</title>
-    <script src="script.js" defer></script>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sketchpad - Draw Online</title>
+    <meta name="description" content="An online sketchpad to unleash your creativity. Draw, color, and export your creations.">
+    <link rel="icon" type="image/x-icon" href="public/favicon.ico">
 </head>
-<body>
-    <div class="mainDiv">
-        <div class="menuDiv">
-            <h1>Sketchpad</h1>
-            <p>Hi, draw whatever you want!</p>
-            <div class="selDiv">
-                <button class="selBtn" id="resize">Resize</button>
-                <button class="selBtn" id="draw">Draw</button>
-                <button class="selBtn" id="random">Random Color</button>
-                <button class="selBtn" id="erase">Erase</button>
-                <button class="selBtn" id="reset">Reset</button>
+<body class="bg-slate-900 flex items-center justify-center min-h-screen font-sans p-4">
+    
+    <div id="background-shapes"></div>
+    
+    <main class="w-full max-w-6xl flex flex-col-reverse md:flex-row items-center justify-center gap-4 lg:gap-8 relative z-10">
+
+        <div class="bg-slate-800/50 backdrop-blur-lg p-5 lg:p-6 rounded-xl shadow-2xl flex flex-col gap-4 lg:gap-5 text-center w-full md:w-auto md:min-w-[300px] md:max-w-[350px]">
+            <div class="border-b border-slate-700 pb-4">
+                <h1 class="text-2xl lg:text-3xl font-bold color-titulo">Sketchpad</h1>
+                <p class="text-slate-400 text-sm mt-1">Draw whatever you want.</p>
+                <p class="text-slate-500 text-xs mt-2">
+                    by <a href="https://ericpastor.vercel.app/" target="_blank" rel="noopener noreferrer" class="text-amber-400 hover:text-amber-300 transition-colors duration-200 credit-link">Eric Pastor</a>
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-2 gap-3">
+                <button id="draw" class="tool-btn flex items-center justify-center px-4 py-3 rounded-lg font-semibold text-lime-300 bg-lime-500/10 border border-lime-500/30 hover:bg-lime-500 hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-lime-500" data-ring-color="ring-lime-400">
+                    <i data-lucide="pencil" class="w-5 h-5"></i>
+                    <span class="sr-only">Draw</span>
+                </button>
+                <button id="random" class="flex items-center justify-center px-4 py-3 rounded-lg font-semibold text-violet-300 bg-violet-500/10 border border-violet-500/30 hover:bg-violet-500 hover:text-white transition-all duration-200 focus:outline-none focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-violet-500">
+                    <i data-lucide="palette" class="w-5 h-5"></i>
+                    <span class="sr-only">Color Palette</span>
+                </button>
+                <button id="erase" class="tool-btn flex items-center justify-center px-4 py-3 rounded-lg font-semibold text-rose-300 bg-rose-500/10 border border-rose-500/30 hover:bg-rose-500 hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-rose-500" data-ring-color="ring-rose-400">
+                    <i data-lucide="eraser" class="w-5 h-5"></i>
+                    <span class="sr-only">Erase</span>
+                </button>
+                <button id="toggle-grid" class="flex items-center justify-center px-4 py-3 rounded-lg font-semibold text-sky-300 bg-sky-500/10 border border-sky-500/30 hover:bg-sky-500 hover:text-white transition-all duration-200 focus:outline-none focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-sky-500">
+                    <i data-lucide="grid-3x3" class="w-5 h-5"></i>
+                    <span class="sr-only">Hide Grid</span>
+                </button>
+                <div class="col-span-2 sm:col-span-4 md:col-span-2 flex gap-3">
+                    <button id="bucket-btn" class="tool-btn w-1/2 flex items-center justify-center px-4 py-3 rounded-lg font-semibold text-orange-300 bg-orange-500/10 border border-orange-500/30 hover:bg-orange-500 hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-orange-500" data-ring-color="ring-orange-400">
+                        <i data-lucide="paint-bucket" class="w-5 h-5"></i>
+                        <span class="sr-only">Fill</span>
+                    </button>
+                    <button id="reset" class="w-1/2 flex items-center justify-center px-4 py-3 rounded-lg font-semibold text-slate-300 bg-slate-500/10 border border-slate-500/30 hover:bg-slate-700 hover:text-white transition-all duration-200 focus:outline-none focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-slate-500">
+                        <i data-lucide="trash-2" class="w-5 h-5"></i>
+                        <span class="sr-only">Clear</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="color-submenu" class="pt-3 default-open">
+                <div class="p-2 bg-slate-900/50 rounded-lg grid grid-cols-5 sm:grid-cols-6 md:grid-cols-5 lg:grid-cols-6 gap-1.5">
+                    <button class="color-swatch w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-md border-2 border-transparent hover:border-white" style="background-color: #ffffff;" data-color="#ffffff"></button>
+                    <button class="color-swatch w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-md border-2 border-transparent hover:border-white" style="background-color: #808080;" data-color="#808080"></button>
+                    <button class="color-swatch w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-md border-2 border-transparent hover:border-white" style="background-color: #2f3542;" data-color="#2f3542"></button>
+                    <button class="color-swatch w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-md border-2 border-transparent hover:border-white" style="background-color: #f4a460;" data-color="#f4a460"></button>
+                    <button class="color-swatch w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-md border-2 border-transparent hover:border-white" style="background-color: #8b4513;" data-color="#8b4513"></button>
+                    <button class="color-swatch w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-md border-2 border-transparent hover:border-white" style="background-color: #dc2626;" data-color="#dc2626"></button>
+                    <button class="color-swatch w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-md border-2 border-transparent hover:border-white" style="background-color: #ef4444;" data-color="#ef4444"></button>
+                    <button class="color-swatch w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-md border-2 border-transparent hover:border-white" style="background-color: #f97316;" data-color="#f97316"></button>
+                    <button class="color-swatch w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-md border-2 border-transparent hover:border-white" style="background-color: #f59e0b;" data-color="#f59e0b"></button>
+                    <button class="color-swatch w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-md border-2 border-transparent hover:border-white" style="background-color: rgb(251, 208, 74);" data-color="rgb(251, 208, 74)"></button>
+                    <button class="color-swatch w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-md border-2 border-transparent hover:border-white" style="background-color: #84cc16;" data-color="#84cc16"></button>
+                    <button class="color-swatch w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-md border-2 border-transparent hover:border-white" style="background-color: #22c55e;" data-color="#22c55e"></button>
+                    <button class="color-swatch w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-md border-2 border-transparent hover:border-white" style="background-color: #059669;" data-color="#059669"></button>
+                    <button class="color-swatch w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-md border-2 border-transparent hover:border-white" style="background-color: #14b8a6;" data-color="#14b8a6"></button>
+                    <button class="color-swatch w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-md border-2 border-transparent hover:border-white" style="background-color: #06b6d4;" data-color="#06b6d4"></button>
+                    <button class="color-swatch w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-md border-2 border-transparent hover:border-white" style="background-color: #3b82f6;" data-color="#3b82f6"></button>
+                    <button class="color-swatch w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-md border-2 border-transparent hover:border-white" style="background-color: #7c3aed;" data-color="#7c3aed"></button>
+                    <button class="color-swatch w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-md border-2 border-transparent hover:border-white" style="background-color: #8b5cf6;" data-color="#8b5cf6"></button>
+                    <button class="color-swatch w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-md border-2 border-transparent hover:border-white" style="background-color: #d946ef;" data-color="#d946ef"></button>
+                    <button id="random-color-btn" class="w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-md border-2 border-transparent hover:border-white animated-gradient"></button>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-700 pt-4 mt-3">
+                <label for="brush-size-input" class="text-sm text-slate-400 mb-2 block flex items-center gap-2">
+                    <i data-lucide="circle" class="w-4 h-4"></i>
+                    <span>Brush Size</span>
+                </label>
+                <div class="flex items-center gap-2">
+                    <input type="range" id="brush-size-input" value="1" min="1" max="10" class="flex-1 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                    <span id="brush-size-label" class="text-white font-mono w-8 text-center text-sm">1</span>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-700 pt-4">
+                <label for="grid-size-input" class="text-sm text-slate-400 mb-2 block flex items-center gap-2">
+                    <i data-lucide="grid-3x3" class="w-4 h-4"></i>
+                    <span>Grid Size</span>
+                </label>
+                <div class="flex gap-2">
+                    <input type="number" id="grid-size-input" value="16" class="flex-1 bg-slate-900/50 text-white text-center rounded-lg border-slate-700 focus:ring-amber-500 focus:border-amber-500 text-sm">
+                    <button id="resize" class="flex items-center justify-center p-3 rounded-lg font-semibold border border-slate-600 bg-slate-900/50 color-titulo transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-amber-500">
+                        <i data-lucide="check" class="w-4 h-4"></i>
+                       <span class="sr-only">Apply</span>
+                    </button>
+                </div>
+            </div>
+            <button id="export-btn" class="flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold text-green-300 bg-green-500/10 border border-green-500/30 hover:bg-green-500 hover:text-white transition-all duration-200 text-sm">
+                <i data-lucide="download" class="w-5 h-5"></i>
+                <span>Generate Image</span>
+            </button>
+        </div>
+
+        <div id="grid-container" class="bg-slate-800/50 backdrop-blur-lg p-2 rounded-xl shadow-2xl w-full md:w-auto">
+            <div class="gridDiv w-full aspect-square sm:w-[450px] sm:h-auto md:w-[550px] lg:w-[600px] xl:w-[700px] 2xl:w-[800px] max-w-[95vw] bg-white rounded-lg grid overflow-hidden">
+                </div>
+        </div>
+    </main>
+
+    <div id="confirmation-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-slate-800/90 backdrop-blur-lg p-6 rounded-xl shadow-2xl max-w-xs w-full mx-4 transform scale-95 transition-transform duration-300">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="trash-2" class="w-8 h-8 text-red-400"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">Clear Canvas?</h3>
+                <p class="text-slate-400 mb-6">This will delete all content. Cannot be undone.</p>
+                <div class="flex gap-3">
+                    <button id="cancel-reset" class="flex-1 px-4 py-3 rounded-lg font-semibold text-slate-300 bg-slate-700/50 border border-slate-600 hover:bg-slate-700 hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-slate-500">Cancel</button>
+                    <button id="confirm-reset" class="flex-1 px-4 py-3 rounded-lg font-semibold text-white bg-red-500 border border-red-500 hover:bg-red-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-red-500">Clear All</button>
+                </div>
             </div>
         </div>
-        <div class="gridDiv">
+    </div>
+    <div id="success-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-slate-800/90 backdrop-blur-lg p-6 rounded-xl shadow-2xl max-w-xs w-full mx-4 transform scale-95 transition-transform duration-300">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="check-circle" class="w-8 h-8 text-green-400"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">Image Generated!</h3>
+                <p class="text-slate-400 mb-6">Image downloaded successfully. Check your downloads.</p>
+                <button id="close-success" class="w-full px-4 py-3 rounded-lg font-semibold text-white bg-green-500 border border-green-500 hover:bg-green-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-green-500">Perfect!</button>
+            </div>
         </div>
     </div>
+
+    <script type="module" src="src/main.js"></script>
 </body>
 </html>
